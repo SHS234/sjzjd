@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tencent.tdesign.mapper.BoosterMapper">
+    <resultMap id="BaseResultMap" type="com.tencent.tdesign.entity.BoosterEntity">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="nickname" property="nickname" />
+        <result column="phone" property="phone" />
+        <result column="game_rank" property="rank" />
+        <result column="regions" property="regions" />
+        <result column="device" property="device" />
+        <result column="auth_image" property="authImage" />
+        <result column="status" property="status" />
+        <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, name, nickname, phone, game_rank, regions, device, auth_image, status, created_at, updated_at
+    </sql>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" />
+        FROM boosters
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectPage" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" />
+        FROM boosters
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (name LIKE CONCAT('%', #{keyword}, '%') 
+                     OR nickname LIKE CONCAT('%', #{keyword}, '%')
+                     OR phone LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+        </where>
+        ORDER BY created_at DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="count" resultType="long">
+        SELECT COUNT(*)
+        FROM boosters
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (name LIKE CONCAT('%', #{keyword}, '%') 
+                     OR nickname LIKE CONCAT('%', #{keyword}, '%')
+                     OR phone LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert" parameterType="com.tencent.tdesign.entity.BoosterEntity" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO boosters (name, nickname, phone, game_rank, regions, device, auth_image, status)
+        VALUES (#{name}, #{nickname}, #{phone}, #{rank}, #{regions}, #{device}, #{authImage}, #{status})
+    </insert>
+
+    <update id="update" parameterType="com.tencent.tdesign.entity.BoosterEntity">
+        UPDATE boosters
+        SET name = #{name},
+            nickname = #{nickname},
+            phone = #{phone},
+            game_rank = #{rank},
+            regions = #{regions},
+            device = #{device},
+            auth_image = #{authImage},
+            status = #{status}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM boosters WHERE id = #{id}
+    </delete>
+</mapper>

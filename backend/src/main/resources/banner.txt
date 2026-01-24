@@ -1,0 +1,12 @@
+
+${AnsiColor.BRIGHT_BLUE}
+  _______   _____                 _               
+ |__   __| |  __ \               (_)              
+    | |    | |  | |  ___   ___   _   __ _  _ __   
+    | |    | |  | | / _ \ / __| | | / _` || '_ \  
+    | |    | |__| ||  __/ \__ \ | || (_| || | | | 
+    |_|    |_____/  \___| |___/ |_| \__, ||_| |_| 
+                                     __/ |        
+                                    |___/         
+${AnsiColor.BRIGHT_CYAN} :: TDesign Starter :: ${spring-boot.version}
+${AnsiColor.DEFAULT}

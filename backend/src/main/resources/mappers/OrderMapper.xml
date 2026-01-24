@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tencent.tdesign.mapper.OrderMapper">
+    <resultMap id="BaseResultMap" type="com.tencent.tdesign.entity.OrderEntity">
+        <id column="id" property="id" />
+        <result column="order_no" property="orderNo" />
+        <result column="title" property="title" />
+        <result column="customer_id" property="customerId" />
+        <result column="booster_id" property="boosterId" />
+        <result column="amount" property="amount" />
+        <result column="status" property="status" />
+        <result column="description" property="description" />
+        <result column="region" property="region" />
+        <result column="game_name" property="gameName" />
+        <result column="game_mode" property="gameMode" />
+        <result column="account_username" property="accountUsername" />
+        <result column="account_password" property="accountPassword" />
+        <result column="game_meta_data" property="gameMetaData" />
+        <result column="proof_images" property="proofImages" />
+        <result column="deadline_time" property="deadlineTime" />
+        <result column="is_paused" property="isPaused" />
+        <result column="pause_reason" property="pauseReason" />
+        <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
+        <result column="customer_name" property="customerName" />
+        <result column="customer_phone" property="customerPhone" />
+        <result column="customer_wechat" property="customerWechat" />
+        <result column="customer_qq" property="customerQq" />
+        <result column="customer_source" property="customerSource" />
+        <result column="xianyu_order_no" property="xianyuOrderNo" />
+        <result column="game_uid" property="gameUid" />
+        <result column="game_rank" property="gameRank" />
+        <result column="ban_record" property="banRecord" />
+        <result column="special_requirements" property="specialRequirements" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, order_no, title, customer_id, booster_id, amount, status, description, 
+        region, game_name, game_mode, account_username, account_password,
+        game_meta_data, proof_images, deadline_time, is_paused, pause_reason, created_at, updated_at,
+        customer_name, customer_phone, customer_wechat, customer_qq, customer_source, xianyu_order_no,
+        game_uid, game_rank, ban_record, special_requirements
+    </sql>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" />
+        FROM orders
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectByOrderNo" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" />
+        FROM orders
+        WHERE order_no = #{orderNo}
+    </select>
+
+    <select id="selectPage" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" />
+        FROM orders
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (title LIKE CONCAT('%', #{keyword}, '%') OR order_no LIKE CONCAT('%', #{keyword}, '%') OR xianyu_order_no LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+        </where>
+        ORDER BY created_at DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="count" resultType="long">
+        SELECT COUNT(*)
+        FROM orders
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (title LIKE CONCAT('%', #{keyword}, '%') OR order_no LIKE CONCAT('%', #{keyword}, '%') OR xianyu_order_no LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+        </where>
+    </select>
+
+    <select id="sumAmountByStatus" resultType="java.math.BigDecimal">
+        SELECT COALESCE(SUM(amount), 0)
+        FROM orders
+        <where>
+            <if test="status != null and status != ''">
+                AND UPPER(status) = UPPER(#{status})
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert" parameterType="com.tencent.tdesign.entity.OrderEntity" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO orders (
+            order_no, title, customer_id, booster_id, amount, status, description,
+            region, game_name, game_mode, account_username, account_password,
+            game_meta_data, proof_images, deadline_time, is_paused, pause_reason, created_at, updated_at,
+            customer_name, customer_phone, customer_wechat, customer_qq, customer_source, xianyu_order_no,
+            game_uid, game_rank, ban_record, special_requirements
+        ) VALUES (
+            #{orderNo}, #{title}, #{customerId}, #{boosterId}, #{amount}, #{status}, #{description},
+            #{region}, #{gameName}, #{gameMode}, #{accountUsername}, #{accountPassword},
+            #{gameMetaData}, #{proofImages}, #{deadlineTime}, #{isPaused}, #{pauseReason}, #{createdAt}, #{updatedAt},
+            #{customerName}, #{customerPhone}, #{customerWechat}, #{customerQq}, #{customerSource}, #{xianyuOrderNo},
+            #{gameUid}, #{gameRank}, #{banRecord}, #{specialRequirements}
+        )
+    </insert>
+
+    <select id="countByBoosterIdAndStatus" resultType="long">
+        SELECT COUNT(*)
+        FROM orders
+        WHERE booster_id = #{boosterId} AND status = #{status}
+    </select>
+
+    <update id="update" parameterType="com.tencent.tdesign.entity.OrderEntity">
+        UPDATE orders
+        <set>
+            <if test="title != null">title = #{title},</if>
+            <if test="boosterId != null">booster_id = #{boosterId},</if>
+            <if test="amount != null">amount = #{amount},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="region != null">region = #{region},</if>
+            <if test="gameName != null">game_name = #{gameName},</if>
+            <if test="gameMode != null">game_mode = #{gameMode},</if>
+            <if test="accountUsername != null">account_username = #{accountUsername},</if>
+            <if test="accountPassword != null">account_password = #{accountPassword},</if>
+            <if test="gameMetaData != null">game_meta_data = #{gameMetaData},</if>
+            <if test="proofImages != null">proof_images = #{proofImages},</if>
+            <if test="deadlineTime != null">deadline_time = #{deadlineTime},</if>
+            <if test="isPaused != null">is_paused = #{isPaused},</if>
+            <if test="pauseReason != null">pause_reason = #{pauseReason},</if>
+            <if test="customerName != null">customer_name = #{customerName},</if>
+            <if test="customerPhone != null">customer_phone = #{customerPhone},</if>
+            <if test="customerWechat != null">customer_wechat = #{customerWechat},</if>
+            <if test="customerQq != null">customer_qq = #{customerQq},</if>
+            <if test="customerSource != null">customer_source = #{customerSource},</if>
+            <if test="xianyuOrderNo != null">xianyu_order_no = #{xianyuOrderNo},</if>
+            <if test="gameUid != null">game_uid = #{gameUid},</if>
+            <if test="gameRank != null">game_rank = #{gameRank},</if>
+            <if test="banRecord != null">ban_record = #{banRecord},</if>
+            <if test="specialRequirements != null">special_requirements = #{specialRequirements},</if>
+            updated_at = NOW()
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM orders WHERE id = #{id}
+    </delete>
+</mapper>

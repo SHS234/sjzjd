@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tencent.tdesign.mapper.AfterSalesMapper">
+
+    <resultMap id="BaseResultMap" type="com.tencent.tdesign.entity.AfterSalesEntity">
+        <id column="id" property="id" />
+        <result column="order_id" property="orderId" />
+        <result column="initiator_id" property="initiatorId" />
+        <result column="reason_type" property="reasonType" />
+        <result column="description" property="description" />
+        <result column="evidence_imgs" property="evidenceImgs" />
+        <result column="status" property="status" />
+        <result column="refund_amount" property="refundAmount" />
+        <result column="booster_income" property="boosterIncome" />
+        <result column="penalty_amount" property="penaltyAmount" />
+        <result column="admin_remark" property="adminRemark" />
+        <result column="resolved_at" property="resolvedAt" />
+        <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
+        <result column="booster_name" property="boosterName" />
+    </resultMap>
+
+    <insert id="insert" parameterType="com.tencent.tdesign.entity.AfterSalesEntity" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO after_sales (
+            order_id, initiator_id, reason_type, description, evidence_imgs,
+            status, refund_amount, booster_income, penalty_amount,
+            admin_remark, resolved_at, created_at, updated_at
+        ) VALUES (
+            #{orderId}, #{initiatorId}, #{reasonType}, #{description}, #{evidenceImgs},
+            #{status}, #{refundAmount}, #{boosterIncome}, #{penaltyAmount},
+            #{adminRemark}, #{resolvedAt}, #{createdAt}, #{updatedAt}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.tencent.tdesign.entity.AfterSalesEntity">
+        UPDATE after_sales
+        <set>
+            <if test="status != null">status = #{status},</if>
+            <if test="refundAmount != null">refund_amount = #{refundAmount},</if>
+            <if test="boosterIncome != null">booster_income = #{boosterIncome},</if>
+            <if test="penaltyAmount != null">penalty_amount = #{penaltyAmount},</if>
+            <if test="adminRemark != null">admin_remark = #{adminRemark},</if>
+            <if test="resolvedAt != null">resolved_at = #{resolvedAt},</if>
+            <if test="updatedAt != null">updated_at = #{updatedAt},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT * FROM after_sales WHERE id = #{id}
+    </select>
+
+    <delete id="delete">
+        DELETE FROM after_sales WHERE id = #{id}
+    </delete>
+
+    <select id="selectByOrderId" resultMap="BaseResultMap">
+        SELECT * FROM after_sales WHERE order_id = #{orderId} LIMIT 1
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap">
+        SELECT a.*, b.name as booster_name
+        FROM after_sales a
+        LEFT JOIN orders o ON a.order_id = o.id
+        LEFT JOIN boosters b ON o.booster_id = b.id
+        <where>
+            <if test="status != null and status != ''">
+                AND a.status = #{status}
+            </if>
+            <if test="initiatorId != null">
+                AND a.initiator_id = #{initiatorId}
+            </if>
+        </where>
+        ORDER BY a.created_at DESC
+    </select>
+
+</mapper>

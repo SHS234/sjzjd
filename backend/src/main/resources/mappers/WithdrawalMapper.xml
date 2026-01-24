@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tencent.tdesign.mapper.WithdrawalMapper">
+    <resultMap id="BaseResultMap" type="com.tencent.tdesign.entity.WithdrawalEntity">
+        <id column="id" property="id" />
+        <result column="booster_id" property="boosterId" />
+        <result column="amount" property="amount" />
+        <result column="account_info" property="accountInfo" />
+        <result column="status" property="status" />
+        <result column="note" property="note" />
+        <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
+    </resultMap>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT * FROM withdrawals WHERE id = #{id}
+    </select>
+
+    <select id="selectPage" resultMap="BaseResultMap">
+        SELECT * FROM withdrawals
+        <where>
+            <if test="boosterId != null">
+                AND booster_id = #{boosterId}
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+        </where>
+        ORDER BY created_at DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="count" resultType="long">
+        SELECT COUNT(*) FROM withdrawals
+        <where>
+            <if test="boosterId != null">
+                AND booster_id = #{boosterId}
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert" parameterType="com.tencent.tdesign.entity.WithdrawalEntity" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO withdrawals (booster_id, amount, account_info, status, note, created_at, updated_at)
+        VALUES (#{boosterId}, #{amount}, #{accountInfo}, #{status}, #{note}, #{createdAt}, #{updatedAt})
+    </insert>
+
+    <update id="update" parameterType="com.tencent.tdesign.entity.WithdrawalEntity">
+        UPDATE withdrawals
+        <set>
+            <if test="status != null">status = #{status},</if>
+            <if test="note != null">note = #{note},</if>
+            updated_at = NOW()
+        </set>
+        WHERE id = #{id}
+    </update>
+</mapper>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tencent.tdesign.mapper.SettlementMapper">
+    <resultMap id="BaseResultMap" type="com.tencent.tdesign.entity.SettlementEntity">
+        <id column="id" property="id" />
+        <result column="order_no" property="orderNo" />
+        <result column="booster_id" property="boosterId" />
+        <result column="total_amount" property="totalAmount" />
+        <result column="booster_amount" property="boosterAmount" />
+        <result column="platform_amount" property="platformAmount" />
+        <result column="ratio" property="ratio" />
+        <result column="status" property="status" />
+        <result column="settle_time" property="settleTime" />
+        <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
+    </resultMap>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT * FROM settlements WHERE id = #{id}
+    </select>
+
+    <select id="selectByBoosterId" resultMap="BaseResultMap">
+        SELECT * FROM settlements WHERE booster_id = #{boosterId} ORDER BY created_at DESC
+    </select>
+
+    <select id="selectPage" resultMap="BaseResultMap">
+        SELECT * FROM settlements
+        <where>
+            <if test="boosterId != null">
+                AND booster_id = #{boosterId}
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+        </where>
+        ORDER BY created_at DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="count" resultType="long">
+        SELECT COUNT(*) FROM settlements
+        <where>
+            <if test="boosterId != null">
+                AND booster_id = #{boosterId}
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert" parameterType="com.tencent.tdesign.entity.SettlementEntity" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO settlements (order_no, booster_id, total_amount, booster_amount, platform_amount, ratio, status, settle_time, created_at, updated_at)
+        VALUES (#{orderNo}, #{boosterId}, #{totalAmount}, #{boosterAmount}, #{platformAmount}, #{ratio}, #{status}, #{settleTime}, #{createdAt}, #{updatedAt})
+    </insert>
+
+    <update id="update" parameterType="com.tencent.tdesign.entity.SettlementEntity">
+        UPDATE settlements
+        <set>
+            <if test="status != null">status = #{status},</if>
+            <if test="settleTime != null">settle_time = #{settleTime},</if>
+            updated_at = NOW()
+        </set>
+        WHERE id = #{id}
+    </update>
+</mapper>

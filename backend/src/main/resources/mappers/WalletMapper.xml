@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tencent.tdesign.mapper.WalletMapper">
+    <resultMap id="BaseResultMap" type="com.tencent.tdesign.entity.WalletEntity">
+        <id column="booster_id" property="boosterId" />
+        <result column="balance" property="balance" />
+        <result column="frozen_balance" property="frozenBalance" />
+        <result column="deposit" property="deposit" />
+        <result column="total_withdrawn" property="totalWithdrawn" />
+        <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
+    </resultMap>
+
+    <select id="selectByBoosterId" resultMap="BaseResultMap">
+        SELECT * FROM wallets WHERE booster_id = #{boosterId}
+    </select>
+
+    <select id="selectByUserId" resultMap="BaseResultMap">
+        SELECT * FROM wallets WHERE booster_id = #{userId}
+    </select>
+
+    <insert id="insert" parameterType="com.tencent.tdesign.entity.WalletEntity">
+        INSERT INTO wallets (booster_id, balance, frozen_balance, deposit, total_withdrawn, created_at, updated_at)
+        VALUES (#{boosterId}, #{balance}, #{frozenBalance}, #{deposit}, #{totalWithdrawn}, #{createdAt}, #{updatedAt})
+    </insert>
+
+    <update id="update" parameterType="com.tencent.tdesign.entity.WalletEntity">
+        UPDATE wallets
+        SET balance = #{balance},
+            frozen_balance = #{frozenBalance},
+            deposit = #{deposit},
+            total_withdrawn = #{totalWithdrawn},
+            updated_at = NOW()
+        WHERE booster_id = #{boosterId}
+    </update>
+</mapper>
