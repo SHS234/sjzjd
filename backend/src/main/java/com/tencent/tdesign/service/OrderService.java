@@ -91,7 +91,6 @@ public class OrderService {
         entity.setCustomerPhone(req.getCustomerPhone());
         entity.setCustomerWechat(req.getCustomerWechat());
         entity.setCustomerQq(req.getCustomerQq());
-        entity.setCustomerSource(req.getCustomerSource());
         entity.setXianyuOrderNo(req.getXianyuOrderNo());
         entity.setGameUid(req.getGameUid());
         entity.setGameRank(req.getGameRank());
@@ -138,7 +137,6 @@ public class OrderService {
         entity.setCustomerPhone(req.getCustomerPhone());
         entity.setCustomerWechat(req.getCustomerWechat());
         entity.setCustomerQq(req.getCustomerQq());
-        entity.setCustomerSource(req.getCustomerSource());
         entity.setXianyuOrderNo(req.getXianyuOrderNo());
         entity.setGameUid(req.getGameUid());
         entity.setGameRank(req.getGameRank());

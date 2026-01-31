@@ -109,13 +109,10 @@
             <t-descriptions-item label="订单金额">
               <span class="text-price">¥{{ order.amount }}</span>
             </t-descriptions-item>
-            <t-descriptions-item label="客户来源">{{ order.customerSource || '-' }}</t-descriptions-item>
           </t-descriptions>
           <t-divider dashed style="margin: 12px 0" />
           <t-descriptions :column="1" layout="vertical">
-            <t-descriptions-item label="联系电话">{{ order.customerPhone || '-' }}</t-descriptions-item>
             <t-descriptions-item label="微信号">{{ order.customerWechat || '-' }}</t-descriptions-item>
-            <t-descriptions-item label="QQ号">{{ order.customerQq || '-' }}</t-descriptions-item>
           </t-descriptions>
         </t-card>
       </t-col>
@@ -134,25 +131,6 @@
             <t-tag theme="primary" variant="light">{{ order.region }}</t-tag>
           </template>
           <t-list :split="true">
-            <t-list-item>
-              <t-space direction="vertical" size="small" style="width: 100%">
-                <div class="label">账号</div>
-                <div class="value-row">
-                  <span class="text-ellipsis">{{ order.account }}</span>
-                  <t-button size="small" variant="text" @click="copyText(order.account)">[复制]</t-button>
-                </div>
-              </t-space>
-            </t-list-item>
-            <t-list-item>
-              <t-space direction="vertical" size="small" style="width: 100%">
-                <div class="label">密码</div>
-                <div class="value-row">
-                  <span v-if="showPassword">{{ order.password }}</span>
-                  <span v-else>******</span>
-                  <t-button size="small" variant="text" @click="togglePassword">[点击查看]</t-button>
-                </div>
-              </t-space>
-            </t-list-item>
             <t-list-item>
               <t-space direction="vertical" size="small">
                 <div class="label">游戏UID</div>
@@ -251,38 +229,48 @@
         </t-col>
         <t-col>
           <t-space v-if="currentView === 'booster'" align="center" class="booster-actions" style="margin-left: -8px">
+            <!-- 结单按钮 -->
+          <template v-if="['PENDING', 'PROCESSING', 'LOCKED'].includes(order.status)">
             <t-popconfirm
-              v-if="order.status === 'PROCESSING' && order.boosterId"
+              v-if="order.boosterId"
               content="确认结单吗？这将生成结算记录。"
               @confirm="handleComplete"
             >
               <t-button theme="success" size="medium">结单</t-button>
             </t-popconfirm>
-            <t-button v-else-if="order.status === 'PROCESSING'" theme="success" size="medium" @click="handleComplete">
+            <t-button v-else theme="success" size="medium" @click="handleComplete">
               结单
             </t-button>
+          </template>
+
+            <!-- 售后按钮 -->
             <t-button
-              v-if="order.status !== 'LOCKED' && order.status !== 'CLOSED'"
+              v-if="!['LOCKED', 'CLOSED'].includes(order.status)"
               theme="danger"
               size="medium"
               @click="$router.push(`/after-sales/apply?orderId=${order.id}`)"
             >
               申请售后
             </t-button>
-            <template v-else>
-              <t-popconfirm content="确认结单吗？这将生成结算记录。" @confirm="handleComplete">
-                <t-button theme="success" size="medium">结单</t-button>
-              </t-popconfirm>
-              <t-button
-                theme="warning"
-                variant="outline"
-                @click="$router.push(`/after-sales/detail?orderId=${order.id}`)"
-              >
-                查看售后
-              </t-button>
-            </template>
+            <t-button
+              v-else
+              theme="warning"
+              variant="outline"
+              @click="$router.push(`/after-sales/detail?orderId=${order.id}`)"
+            >
+              查看售后
+            </t-button>
           </t-space>
           <t-space v-else>
+            <!-- 管理员强制结单按钮 -->
+          <t-popconfirm
+            v-if="['PENDING', 'PROCESSING', 'LOCKED'].includes(order.status)"
+            content="确认强制结单吗？这将生成结算记录。"
+            @confirm="handleComplete"
+          >
+            <t-button theme="success" variant="outline">强制结单</t-button>
+          </t-popconfirm>
+
             <t-button
               v-if="order.status === 'LOCKED'"
               theme="warning"
@@ -623,7 +611,6 @@ export default defineComponent({
       amount: 0,
       status: 'PENDING',
       boosterId: '',
-      customerSource: '',
       customerName: '',
       customerPhone: '',
       customerWechat: '',
@@ -639,7 +626,6 @@ export default defineComponent({
       targetItems: [] as string[],
       requirements: [] as string[],
       account: '',
-      password: '',
       createdAt: '',
       deadlineTime: '',
       isPaused: false,
@@ -719,7 +705,6 @@ export default defineComponent({
           order.amount = res.amount;
           order.status = res.status;
           order.boosterId = res.boosterId || '';
-          order.customerSource = res.customerSource || '';
           order.customerPhone = res.customerPhone || '';
           order.customerWechat = res.customerWechat || '';
           order.customerQq = res.customerQq || '';
@@ -730,7 +715,6 @@ export default defineComponent({
           order.gameUid = res.gameUid || '';
           order.gameRank = res.gameRank || '';
           order.account = res.accountUsername;
-          order.password = res.accountPassword || '';
           order.createdAt = res.createdAt || '';
           order.deadlineTime = res.deadlineTime || '';
           order.isPaused = res.isPaused || false;
@@ -905,13 +889,6 @@ export default defineComponent({
       initData();
     });
 
-    const showPassword = ref(false);
-    const togglePassword = () => {
-      showPassword.value = !showPassword.value;
-      if (showPassword.value) {
-        MessagePlugin.info('已记录查看日志');
-      }
-    };
     const copyText = (text: string) => {
       navigator.clipboard.writeText(text);
       MessagePlugin.success('复制成功');
@@ -1083,8 +1060,6 @@ export default defineComponent({
       isOverdue,
       booster,
       order,
-      showPassword,
-      togglePassword,
       copyText,
       currentView,
       changeBoosterVisible,

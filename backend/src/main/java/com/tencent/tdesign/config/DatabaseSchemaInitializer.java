@@ -50,6 +50,7 @@ public class DatabaseSchemaInitializer implements SmartLifecycle {
       ensureStorageSettingsTable();
       ensureAnnouncementTable();
       ensureNotificationTable();
+      ensureBoostersTable();
       ensureAiProviderSettingsTable();
       ensureSensitiveWordsTable();
       ensureSensitivePageSettingsTable();
@@ -687,6 +688,38 @@ public class DatabaseSchemaInitializer implements SmartLifecycle {
     ensureColumn("notifications", "publish_at", "DATETIME NULL");
     ensureColumn("notifications", "created_by_id", "BIGINT NULL");
     ensureColumn("notifications", "created_by_name", "VARCHAR(64) NULL");
+  }
+
+  private void ensureBoostersTable() {
+    if (!tableExists("boosters")) {
+      log.info("创建表 boosters");
+      jdbc.execute(
+        "CREATE TABLE IF NOT EXISTS boosters (" +
+          "id BIGINT PRIMARY KEY AUTO_INCREMENT, " +
+          "name VARCHAR(64) NOT NULL, " +
+          "nickname VARCHAR(64), " +
+          "phone VARCHAR(32) NOT NULL, " +
+          "game_rank VARCHAR(64) NOT NULL, " +
+          "regions VARCHAR(255), " +
+          "device VARCHAR(32) NOT NULL, " +
+          "auth_image VARCHAR(255), " +
+          "status VARCHAR(32) DEFAULT 'OFFLINE', " +
+          "created_at DATETIME, " +
+          "updated_at DATETIME" +
+          ")"
+      );
+      return;
+    }
+    ensureColumn("boosters", "name", "VARCHAR(64) NOT NULL");
+    ensureColumn("boosters", "nickname", "VARCHAR(64) NULL");
+    ensureColumn("boosters", "phone", "VARCHAR(32) NOT NULL");
+    ensureColumn("boosters", "game_rank", "VARCHAR(64) NOT NULL");
+    ensureColumn("boosters", "regions", "VARCHAR(255) NULL");
+    ensureColumn("boosters", "device", "VARCHAR(32) NOT NULL");
+    ensureColumn("boosters", "auth_image", "VARCHAR(255) NULL");
+    ensureColumn("boosters", "status", "VARCHAR(32) NULL");
+    ensureColumn("boosters", "created_at", "DATETIME NULL");
+    ensureColumn("boosters", "updated_at", "DATETIME NULL");
   }
 
   private void ensureAiProviderSettingsTable() {

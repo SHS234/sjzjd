@@ -1544,7 +1544,7 @@ CREATE TABLE `users`  (
 -- ----------------------------
 -- Records of users
 -- ----------------------------
-INSERT INTO `users` VALUES (1, 'admin', '宋昊晟', '$2a$10$BbVSQCIChdR.4gfwiG1OduJiKE/KpUTbhBXd.7Sr.uwi8eggDpYeu', '', '', '', 'T32F 001', '腾讯集团', 'CEO', '系统管理员', '2018-01-01', '腾讯/腾讯公司/管理层/系统管理组', 'male', '管理员', '', '', '', '', '', '/api/uploads/business/b27eeb829cd64ccaab15123e70678c24.jpg', '', '', 'e59c3cd1-3b52-47c7-bf88-fad5b2281827');
+INSERT INTO `users` VALUES (1, 'admin', '宋昊晟', '$2a$10$IeXUcd/zHFsbSuARDLbStegT12KaH4bxYbX.AVBRz3cRDuXoK7jiG', '', '', '', 'T32F 001', '腾讯集团', 'CEO', '系统管理员', '2018-01-01', '腾讯/腾讯公司/管理层/系统管理组', 'male', '管理员', '', '', '', '', '', '/api/uploads/business/b27eeb829cd64ccaab15123e70678c24.jpg', '', '', 'e59c3cd1-3b52-47c7-bf88-fad5b2281827');
 INSERT INTO `users` VALUES (148, 'admin3', 'Admin Three', '$2a$10$e1tqPQdmcvdJItQI89/ZC.TieQ49T8vCfLzVL/dJuReHUD42Zjcc2', '13800138003', NULL, 'admin3@example.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '110101199003071235', '6ed25d3d-8ea2-4b64-91d1-1e05c884a6d0');
 
 -- ----------------------------

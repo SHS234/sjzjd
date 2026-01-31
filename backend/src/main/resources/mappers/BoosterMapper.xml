@@ -54,8 +54,8 @@
     </select>
 
     <insert id="insert" parameterType="com.tencent.tdesign.entity.BoosterEntity" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO boosters (name, nickname, phone, game_rank, regions, device, auth_image, status)
-        VALUES (#{name}, #{nickname}, #{phone}, #{rank}, #{regions}, #{device}, #{authImage}, #{status})
+        INSERT INTO boosters (name, nickname, phone, game_rank, regions, device, auth_image, status, created_at, updated_at)
+        VALUES (#{name}, #{nickname}, #{phone}, #{rank}, #{regions}, #{device}, #{authImage}, #{status}, #{createdAt}, #{updatedAt})
     </insert>
 
     <update id="update" parameterType="com.tencent.tdesign.entity.BoosterEntity">
@@ -67,7 +67,8 @@
             regions = #{regions},
             device = #{device},
             auth_image = #{authImage},
-            status = #{status}
+            status = #{status},
+            updated_at = #{updatedAt}
         WHERE id = #{id}
     </update>
 

@@ -19,8 +19,6 @@
         </t-layout>
       </t-layout>
     </template>
-
-    <ai-assistant v-if="settingStore.aiAssistantEnabled" />
   </div>
 </template>
 <script setup lang="ts">
@@ -33,7 +31,6 @@ import { useRoute } from 'vue-router';
 import { prefix } from '@/config/global';
 import { useSettingStore } from '@/store';
 
-import AiAssistant from './components/AiAssistant.vue';
 import LayoutContent from './components/LayoutContent.vue';
 import LayoutHeader from './components/LayoutHeader.vue';
 import LayoutSideNav from './components/LayoutSideNav.vue';

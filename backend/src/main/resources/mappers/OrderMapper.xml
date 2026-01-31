@@ -26,11 +26,9 @@
         <result column="customer_phone" property="customerPhone" />
         <result column="customer_wechat" property="customerWechat" />
         <result column="customer_qq" property="customerQq" />
-        <result column="customer_source" property="customerSource" />
         <result column="xianyu_order_no" property="xianyuOrderNo" />
         <result column="game_uid" property="gameUid" />
         <result column="game_rank" property="gameRank" />
-        <result column="ban_record" property="banRecord" />
         <result column="special_requirements" property="specialRequirements" />
     </resultMap>
 
@@ -38,8 +36,8 @@
         id, order_no, title, customer_id, booster_id, amount, status, description, 
         region, game_name, game_mode, account_username, account_password,
         game_meta_data, proof_images, deadline_time, is_paused, pause_reason, created_at, updated_at,
-        customer_name, customer_phone, customer_wechat, customer_qq, customer_source, xianyu_order_no,
-        game_uid, game_rank, ban_record, special_requirements
+        customer_name, customer_phone, customer_wechat, customer_qq, xianyu_order_no,
+        game_uid, game_rank, special_requirements
     </sql>
 
     <select id="selectById" resultMap="BaseResultMap">
@@ -97,14 +95,14 @@
             order_no, title, customer_id, booster_id, amount, status, description,
             region, game_name, game_mode, account_username, account_password,
             game_meta_data, proof_images, deadline_time, is_paused, pause_reason, created_at, updated_at,
-            customer_name, customer_phone, customer_wechat, customer_qq, customer_source, xianyu_order_no,
-            game_uid, game_rank, ban_record, special_requirements
+            customer_name, customer_phone, customer_wechat, customer_qq, xianyu_order_no,
+            game_uid, game_rank, special_requirements
         ) VALUES (
             #{orderNo}, #{title}, #{customerId}, #{boosterId}, #{amount}, #{status}, #{description},
             #{region}, #{gameName}, #{gameMode}, #{accountUsername}, #{accountPassword},
             #{gameMetaData}, #{proofImages}, #{deadlineTime}, #{isPaused}, #{pauseReason}, #{createdAt}, #{updatedAt},
-            #{customerName}, #{customerPhone}, #{customerWechat}, #{customerQq}, #{customerSource}, #{xianyuOrderNo},
-            #{gameUid}, #{gameRank}, #{banRecord}, #{specialRequirements}
+            #{customerName}, #{customerPhone}, #{customerWechat}, #{customerQq}, #{xianyuOrderNo},
+            #{gameUid}, #{gameRank}, #{specialRequirements}
         )
     </insert>
 
@@ -136,11 +134,9 @@
             <if test="customerPhone != null">customer_phone = #{customerPhone},</if>
             <if test="customerWechat != null">customer_wechat = #{customerWechat},</if>
             <if test="customerQq != null">customer_qq = #{customerQq},</if>
-            <if test="customerSource != null">customer_source = #{customerSource},</if>
             <if test="xianyuOrderNo != null">xianyu_order_no = #{xianyuOrderNo},</if>
             <if test="gameUid != null">game_uid = #{gameUid},</if>
             <if test="gameRank != null">game_rank = #{gameRank},</if>
-            <if test="banRecord != null">ban_record = #{banRecord},</if>
             <if test="specialRequirements != null">special_requirements = #{specialRequirements},</if>
             updated_at = NOW()
         </set>

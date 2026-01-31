@@ -132,29 +132,8 @@
             </t-form-item>
           </t-col>
           <t-col :span="6">
-            <t-form-item label="手机号" name="customerPhone">
-              <t-input v-model="formData.customerPhone" placeholder="请输入手机号" />
-            </t-form-item>
-          </t-col>
-          <t-col :span="6">
             <t-form-item label="微信号" name="customerWechat">
               <t-input v-model="formData.customerWechat" placeholder="请输入微信号" />
-            </t-form-item>
-          </t-col>
-          <t-col :span="6">
-            <t-form-item label="QQ号" name="customerQq">
-              <t-input v-model="formData.customerQq" placeholder="请输入QQ号" />
-            </t-form-item>
-          </t-col>
-          <t-col :span="6">
-            <t-form-item label="客户来源" name="customerSource">
-              <t-select v-model="formData.customerSource" placeholder="请选择来源">
-                <t-option value="闲鱼" label="闲鱼" />
-                <t-option value="抖音" label="抖音" />
-                <t-option value="小红书" label="小红书" />
-                <t-option value="老客推荐" label="老客推荐" />
-                <t-option value="其他" label="其他" />
-              </t-select>
             </t-form-item>
           </t-col>
           <t-col :span="6">
@@ -171,6 +150,8 @@
               <t-select v-model="formData.gameName" placeholder="请选择游戏需求">
                 <t-option value="跑刀" label="跑刀" />
                 <t-option value="护航" label="护航" />
+                <t-option value="撞车" label="撞车" />
+                <t-option value="3×3" label="3×3" />
               </t-select>
             </t-form-item>
           </t-col>
@@ -199,26 +180,10 @@
           </t-col>
         </t-row>
 
-        <t-divider align="left"><b>账号信息</b></t-divider>
-        <t-row :gutter="16">
-          <t-col :span="6">
-            <t-form-item label="游戏账号" name="accountUsername">
-              <t-input v-model="formData.accountUsername" placeholder="请输入账号" />
-            </t-form-item>
-          </t-col>
-          <t-col :span="6">
-            <t-form-item label="游戏密码" name="accountPassword">
-              <t-input v-model="formData.accountPassword" type="password" placeholder="请输入密码" />
-            </t-form-item>
-          </t-col>
-        </t-row>
+
 
         <t-divider align="left"><b>其他备注</b></t-divider>
-        <t-form-item label="封号记录" name="banRecord">
-          <t-select v-model="formData.banRecord" placeholder="请选择封号次数">
-            <t-option v-for="n in 11" :key="n - 1" :label="`${n - 1}次`" :value="String(n - 1)" />
-          </t-select>
-        </t-form-item>
+
         <t-form-item label="订单备注" name="description">
           <t-textarea v-model="formData.description" placeholder="请输入订单备注" :maxlength="100" />
         </t-form-item>
@@ -283,14 +248,9 @@ export default defineComponent({
       gameName: '跑刀',
       gameMode: '烽火地带',
       region: 'QQ区',
-      accountUsername: '',
-      accountPassword: '',
       description: '',
       customerName: '',
-      customerPhone: '',
       customerWechat: '',
-      customerQq: '',
-      customerSource: '',
       xianyuOrderNo: '',
       gameUid: '',
       gameRank: '',
@@ -333,7 +293,6 @@ export default defineComponent({
       amount: [{ required: true, message: '请输入金额' }],
       gameName: [{ required: true, message: '请选择游戏需求' }],
       region: [{ required: true, message: '请选择区服' }],
-      banRecord: [{ max: 100, message: '封号记录最多只能写100字' }],
       description: [{ max: 100, message: '订单备注最多只能写100字' }],
     };
 
@@ -433,18 +392,12 @@ export default defineComponent({
         gameName: '跑刀',
         gameMode: '烽火地带',
         region: 'QQ区',
-        accountUsername: '',
-        accountPassword: '',
         description: '',
         customerName: '',
-        customerPhone: '',
         customerWechat: '',
-        customerQq: '',
-        customerSource: '',
         xianyuOrderNo: '',
         gameUid: '',
         gameRank: '',
-        banRecord: '',
         specialRequirements: '',
         targetAssets: '',
       });
@@ -475,14 +428,9 @@ export default defineComponent({
         amount: row.amount,
         gameName: row.gameName,
         region: row.region,
-        accountUsername: row.accountUsername,
-        accountPassword: row.accountPassword,
         description: row.description,
         customerName: row.customerName,
-        customerPhone: row.customerPhone,
         customerWechat: row.customerWechat,
-        customerQq: row.customerQq,
-        customerSource: row.customerSource,
         xianyuOrderNo: row.xianyuOrderNo,
         gameUid: row.gameUid,
         gameRank: row.gameRank,

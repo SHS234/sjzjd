@@ -70,6 +70,13 @@
             <t-form-item>
               <t-space direction="vertical" style="width: 100%">
                 <t-button theme="warning" variant="outline" block @click="handleChangeBooster"> 更换打手 </t-button>
+                <t-popconfirm
+                  v-if="['PROCESSING', 'LOCKED'].includes(order.status)"
+                  content="确认直接结单吗？这将跳过售后流程直接完成订单。"
+                  @confirm="handleForceComplete"
+                >
+                  <t-button theme="success" variant="outline" block>强制结单</t-button>
+                </t-popconfirm>
                 <div v-if="currentBooster" class="booster-info">
                   当前: {{ currentBooster.name }}
                   <span v-if="currentBooster.nickname" class="text-secondary">({{ currentBooster.nickname }})</span>
@@ -113,7 +120,7 @@ import { useRoute } from 'vue-router';
 
 import { getAfterSalesDetail, resolveAfterSales } from '@/api/after-sales';
 import { getBoosterDetail, getBoosterList } from '@/api/booster';
-import { assignOrder, getOrder } from '@/api/order';
+import { assignOrder, getOrder, completeOrder } from '@/api/order';
 
 const route = useRoute();
 const order = ref<any>({});
@@ -190,6 +197,18 @@ const handleConfirm = async () => {
     afterSales.value = asRes;
   } catch {
     MessagePlugin.error('判决执行失败');
+  }
+};
+
+const handleForceComplete = async () => {
+  try {
+    await completeOrder(order.value.id);
+    MessagePlugin.success('订单已强制结单');
+    // Refresh
+    const orderRes = await getOrder(Number(route.query.orderId));
+    order.value = orderRes;
+  } catch (e: any) {
+    MessagePlugin.error(e.message || '操作失败');
   }
 };
 

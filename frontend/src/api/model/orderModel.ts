@@ -22,11 +22,9 @@ export interface Order {
   customerPhone?: string;
   customerWechat?: string;
   customerQq?: string;
-  customerSource?: string;
   xianyuOrderNo?: string;
   gameUid?: string;
   gameRank?: string;
-  banRecord?: string;
   specialRequirements?: string;
   boosterId?: string;
   boosterName?: string;

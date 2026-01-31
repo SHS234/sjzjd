@@ -36,11 +36,11 @@ public class OrderUpsertRequest {
     private String customerPhone;
     private String customerWechat;
     private String customerQq;
-    private String customerSource;
     private String xianyuOrderNo;
     private String gameUid;
     private String gameRank;
     private String banRecord;
+
     private String specialRequirements;
 
     // Getters and Setters
@@ -128,11 +128,6 @@ public class OrderUpsertRequest {
     public String getCustomerQq() { return customerQq; }
     public void setCustomerQq(String customerQq) { this.customerQq = customerQq; }
 
-    public String getCustomerSource() { return customerSource; }
-    public void setCustomerSource(String customerSource) {
-        this.customerSource = customerSource;
-    }
-
     public String getXianyuOrderNo() {
         return xianyuOrderNo;
     }
@@ -145,12 +140,21 @@ public class OrderUpsertRequest {
     public void setGameUid(String gameUid) { this.gameUid = gameUid; }
 
     public String getGameRank() { return gameRank; }
-    public void setGameRank(String gameRank) { this.gameRank = gameRank; }
+    public void setGameRank(String gameRank) {
+        this.gameRank = gameRank;
+    }
 
-    public String getBanRecord() { return banRecord; }
-    public void setBanRecord(String banRecord) { this.banRecord = banRecord; }
+    public String getBanRecord() {
+        return banRecord;
+    }
 
-    public String getSpecialRequirements() { return specialRequirements; }
+    public void setBanRecord(String banRecord) {
+        this.banRecord = banRecord;
+    }
+
+    public String getSpecialRequirements() {
+        return specialRequirements;
+    }
     public void setSpecialRequirements(String specialRequirements) { this.specialRequirements = specialRequirements; }
 
     public String getProofImages() {

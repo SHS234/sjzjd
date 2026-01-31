@@ -49,22 +49,6 @@
           </template>
         </t-input>
       </t-form-item>
-
-      <t-form-item name="captcha">
-        <div v-if="captchaType === 'image'" class="captcha-container">
-          <t-input v-model="captchaValue" size="large" placeholder="请输入验证码">
-            <template #prefix-icon>
-              <t-icon name="verify" />
-            </template>
-          </t-input>
-          <img :src="captchaImage" class="captcha-image" @click="() => loadCaptcha()" />
-        </div>
-        <div v-else class="captcha-placeholder">
-          <t-icon name="verify" />
-          <span>点击登录后完成验证</span>
-          <t-tag v-if="formData.captcha" theme="success" size="small">已完成验证</t-tag>
-        </div>
-      </t-form-item>
     </template>
 
     <!-- 手机号登录 -->
@@ -122,30 +106,13 @@
       <span class="tip" @click="emit('forgot')">{{ t('pages.login.forget') }}</span>
     </div>
   </t-form>
-  <t-dialog
-    v-model:visible="showDragCaptchaDialog"
-    header="完成安全验证"
-    :footer="false"
-    :close-on-overlay-click="false"
-    :width="`${dragWidth + 70}px`"
-  >
-    <drag-captcha
-      v-if="showDragCaptchaDialog"
-      :key="dragRefreshKey"
-      :width="dragWidth"
-      :height="dragHeight"
-      @success="handleDragSuccess"
-      @refresh="handleDragRefresh"
-    />
-  </t-dialog>
 </template>
 <script setup lang="ts">
 import type { FormInstanceFunctions, FormRule, SubmitContext } from 'tdesign-vue-next';
 import { DialogPlugin, MessagePlugin } from 'tdesign-vue-next';
-import { computed, nextTick, onActivated, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, onActivated, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
-import DragCaptcha from '@/components/DragCaptcha.vue';
 import { useCounter } from '@/hooks';
 import { t } from '@/locales';
 import { useSettingStore, useUserStore } from '@/store';
@@ -164,7 +131,6 @@ const INITIAL_DATA = {
   account: 'admin',
   password: '123456',
   verifyCode: '',
-  captcha: '',
   checked: false,
   agreed: false,
 };
@@ -189,21 +155,6 @@ const type = ref('password');
 const form = ref<FormInstanceFunctions>();
 const formData = ref({ ...INITIAL_DATA });
 const showPsw = ref(false);
-const showDragCaptchaDialog = ref(false);
-const pendingDragSubmit = ref(false);
-const sanitizeCaptcha = (value: string) => value.replace(/[^a-z0-9]/gi, '');
-const captchaValue = computed({
-  get: () => formData.value.captcha,
-  set: (value) => {
-    formData.value.captcha = sanitizeCaptcha(String(value ?? ''));
-  },
-});
-const captchaId = ref('');
-const captchaImage = ref('');
-const captchaType = ref<'image' | 'drag'>('image');
-const dragWidth = ref(310);
-const dragHeight = ref(155);
-const dragRefreshKey = ref(0);
 
 const [countDown, handleCounter] = useCounter();
 
@@ -273,65 +224,8 @@ const sendCode = async () => {
   }
 };
 
-const bumpDragCaptcha = () => {
-  dragRefreshKey.value += 1;
-};
-
-const handleDragSuccess = (payload: { captchaVerification: string; token: string }) => {
-  formData.value.captcha = payload.captchaVerification;
-  captchaId.value = payload.token;
-  showDragCaptchaDialog.value = false;
-  if (pendingDragSubmit.value) {
-    pendingDragSubmit.value = false;
-    nextTick(() => {
-      form.value?.submit?.();
-    });
-  }
-};
-
-const handleDragRefresh = () => {
-  formData.value.captcha = '';
-  captchaId.value = '';
-};
-
-const openDragCaptcha = () => {
-  if (captchaType.value !== 'drag') return;
-  bumpDragCaptcha();
-  showDragCaptchaDialog.value = true;
-};
-
-const loadCaptcha = async () => {
-  try {
-    const res = await request.get<{
-      id: string;
-      image: string;
-      type?: 'image' | 'drag';
-      width?: number;
-      height?: number;
-    }>({ url: '/auth/captcha' }, { isTransformResponse: true, withToken: false });
-    captchaType.value = res.type || 'image';
-    if (captchaType.value === 'image') {
-      captchaId.value = res.id;
-      captchaImage.value = res.image;
-    } else {
-      captchaId.value = '';
-      captchaImage.value = '';
-      bumpDragCaptcha();
-    }
-    dragWidth.value = res.width || 310;
-    dragHeight.value = res.height || 155;
-    formData.value.captcha = '';
-  } catch (err: any) {
-    MessagePlugin.error(String(err?.message || '验证码加载失败'));
-  }
-};
-
 const formRules = computed(() => ({
   ...FORM_RULES,
-  captcha:
-    type.value === 'password' && captchaType.value === 'image'
-      ? [{ required: true, message: '请输入验证码', type: 'error' as const }]
-      : [],
 }));
 
 onMounted(() => {
@@ -340,7 +234,6 @@ onMounted(() => {
     formData.value.account = savedAccount;
     formData.value.checked = true;
   }
-  loadCaptcha();
 });
 onActivated(() => {});
 onBeforeUnmount(() => {
@@ -404,7 +297,6 @@ const waitForDecision = (requestId: string, requestKey: string) => {
         throw new Error(t('pages.login.loginFailed'));
       } catch (err: any) {
         MessagePlugin.error(String(err?.message || t('pages.login.loginFailed')));
-        loadCaptcha();
       }
       return;
     }
@@ -412,14 +304,12 @@ const waitForDecision = (requestId: string, requestKey: string) => {
     if (status === 'rejected') {
       closePending();
       MessagePlugin.warning(t('pages.login.loginRejected'));
-      loadCaptcha();
     }
   });
 
   pendingSource.onerror = () => {
     MessagePlugin.error(t('pages.login.waitingFailed'));
     closePending();
-    loadCaptcha();
   };
 };
 
@@ -469,13 +359,7 @@ const onSubmit = async (ctx: SubmitContext) => {
       throw new Error(t('pages.login.loginFailed'));
     }
 
-    if (captchaType.value === 'drag' && !formData.value.captcha) {
-      pendingDragSubmit.value = true;
-      openDragCaptcha();
-      return;
-    }
-
-    const payload = { ...formData.value, captchaId: captchaId.value, captchaCode: formData.value.captcha };
+    const payload = { ...formData.value };
     const res = await userStore.login(payload);
     if (res?.status === 'ok') {
       // 设置 token 过期定时器
@@ -500,46 +384,11 @@ const onSubmit = async (ctx: SubmitContext) => {
     throw new Error(t('pages.login.loginFailed'));
   } catch (e: any) {
     MessagePlugin.error(String(e?.message || t('pages.login.loginFailed')));
-    if (type.value === 'password') {
-      loadCaptcha();
-    }
   }
 };
 </script>
 <style lang="less" scoped>
 @import '../index.less';
-
-.captcha-container {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-
-  :deep(.t-input) {
-    flex: 1;
-    width: auto;
-  }
-}
-
-.captcha-placeholder {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-  padding: 0 12px;
-  height: 40px;
-  border: 1px dashed var(--td-component-stroke);
-  border-radius: var(--td-radius-default);
-  color: var(--td-text-color-secondary);
-}
-
-.captcha-image {
-  width: 120px;
-  height: 40px;
-  cursor: pointer;
-  border-radius: var(--td-radius-default);
-  flex-shrink: 0;
-}
 
 .login-tabs {
   margin-bottom: 12px;
