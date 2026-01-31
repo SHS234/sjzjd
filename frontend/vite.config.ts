@@ -44,11 +44,11 @@ export default ({ mode }: ConfigEnv): UserConfig => {
     ],
 
     server: {
-      port: 3002,
+      port: 9000,
       host: '0.0.0.0',
       allowedHosts: true,
       proxy: {
-        [VITE_API_URL_PREFIX]: VITE_API_URL || 'http://127.0.0.1:8080/',
+        [VITE_API_URL_PREFIX]: VITE_API_URL || 'http://127.0.0.1:9090/',
       },
     },
   };
