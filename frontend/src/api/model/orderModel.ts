@@ -50,4 +50,5 @@ export interface OrderListResult {
 
 export interface OrderSummary {
   totalIncome: number;
+  refundTotal: number;
 }

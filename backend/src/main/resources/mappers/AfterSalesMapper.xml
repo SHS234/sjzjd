@@ -74,4 +74,9 @@
         ORDER BY a.created_at DESC
     </select>
 
+    <select id="sumRefundAmount" resultType="java.math.BigDecimal">
+        SELECT COALESCE(SUM(refund_amount), 0)
+        FROM after_sales
+    </select>
+
 </mapper>

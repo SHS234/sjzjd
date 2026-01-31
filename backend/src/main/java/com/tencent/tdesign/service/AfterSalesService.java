@@ -84,6 +84,11 @@ public class AfterSalesService {
         return afterSalesMapper.selectList(status, initiatorId);
     }
 
+    public java.math.BigDecimal sumRefundAmount() {
+        java.math.BigDecimal total = afterSalesMapper.sumRefundAmount();
+        return total == null ? java.math.BigDecimal.ZERO : total;
+    }
+
     @Transactional
     public void resolve(AfterSalesResolveRequest req) {
         AfterSalesEntity entity = afterSalesMapper.selectById(req.getAfterSalesId());

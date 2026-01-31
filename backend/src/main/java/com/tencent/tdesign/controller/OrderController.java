@@ -2,6 +2,7 @@ package com.tencent.tdesign.controller;
 
 import com.tencent.tdesign.dto.OrderUpsertRequest;
 import com.tencent.tdesign.entity.OrderEntity;
+import com.tencent.tdesign.service.AfterSalesService;
 import com.tencent.tdesign.service.OrderService;
 import com.tencent.tdesign.vo.ApiResponse;
 import com.tencent.tdesign.vo.PageResult;
@@ -20,10 +21,12 @@ public class OrderController {
     
     private final OrderService service;
     private final OrderTimelineService timelineService;
+    private final AfterSalesService afterSalesService;
 
-    public OrderController(OrderService service, OrderTimelineService timelineService) {
+    public OrderController(OrderService service, OrderTimelineService timelineService, AfterSalesService afterSalesService) {
         this.service = service;
         this.timelineService = timelineService;
+        this.afterSalesService = afterSalesService;
     }
 
     @GetMapping
@@ -40,6 +43,7 @@ public class OrderController {
     public ApiResponse<Map<String, Object>> summary() {
         Map<String, Object> result = new HashMap<>();
         result.put("totalIncome", service.sumAmountByStatus("COMPLETED"));
+        result.put("refundTotal", afterSalesService.sumRefundAmount());
         return ApiResponse.success(result);
     }
 
